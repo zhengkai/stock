@@ -1,0 +1,20 @@
+edition = "2024";
+
+package pb;
+
+message Quote {
+    uint64 price = 1;          // 当前价（分）
+    uint64 pre_close = 2;      // 昨收（分）
+    uint64 open = 3;           // 今开（分）
+    uint64 high = 4;           // 最高（分）
+    uint64 low = 5;            // 最低（分）
+
+    int64 change = 6;         // 涨跌额（分）
+
+    int32 change_bp = 7;      // 涨跌幅（BP，万分比）
+    int32 turnover_rate_bp = 8; // 换手率（BP）
+    int32 amplitude_bp = 9;   // 振幅（BP）
+
+    uint64 volume = 10;        // 成交量（手）
+    uint64 turnover = 11;      // 成交额（万元）
+}

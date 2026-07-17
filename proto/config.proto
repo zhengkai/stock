@@ -1,0 +1,14 @@
+edition = "2024";
+
+package pb;
+
+message Config {
+	repeated Alert alert = 1;
+}
+
+message Alert {
+	string code = 1;
+	string name = 2;
+	double min = 3;
+	double max = 4;
+}
