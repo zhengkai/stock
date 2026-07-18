@@ -1,0 +1,29 @@
+{
+  "id": "https://stock.anna.9farm.com/",
+  "name": "Reminder",
+  "short_name": "Reminder",
+  "description": "A personal reminder and notification app",
+
+  "start_url": "/",
+
+  "display": "standalone",
+
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+
+  "lang": "zh-CN",
+
+  "icons": [
+    {
+      "src": "/assets/favicon.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ],
+
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}

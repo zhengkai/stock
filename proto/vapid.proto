@@ -1,0 +1,9 @@
+edition = "2024";
+
+package pb;
+
+message VAPIDSubscription {
+	string endpoint = 1;
+	string p256dh = 2;
+	string auth = 3;
+}
