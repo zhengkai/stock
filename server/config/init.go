@@ -15,6 +15,7 @@ func init() {
 	Dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
 
 	list := map[string]*string{
+		`STOCK_WEB`:   &Web,
 		`STOCK_DIR`:   &StaticDir,
 		EnvItickToken: &ItickToken,
 	}

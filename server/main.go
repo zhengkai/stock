@@ -1,7 +1,12 @@
 package main
 
-import "server/app"
+import (
+	"server/app"
+	"server/web"
+)
 
 func main() {
-	app.Run()
+	go app.Run()
+
+	web.Server()
 }

@@ -1,3 +1,5 @@
+import { pb } from './pb';
+
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register("/worker.js")
 		.then(reg => {
@@ -15,12 +17,30 @@ const sub = async () => {
 
 	const registration = await navigator.serviceWorker.ready;
 
-	const sub = await registration.pushManager.subscribe({
+	const sub = (await registration.pushManager.subscribe({
 		userVisibleOnly: true,
 		applicationServerKey: pubKey,
-	});
+	})).toJSON();
+
+	const t = pb.VAPIDSubscription
+
+	const msg = t.fromObject({
+		endpoint: sub.endpoint,
+		p256dh: sub.keys?.p256dh,
+		auth: sub.keys?.auth,
+	})
+
+	const bin = t.encode(msg).finish();
 
 	console.log('sub', sub)
+
+	await fetch('/api/sub', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/protobuf',
+		},
+		body: new Uint8Array(bin).slice().buffer,
+	});
 };
 
 (() => {

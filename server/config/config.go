@@ -7,4 +7,6 @@ var (
 
 	ItickToken = ``
 	StaticDir  = ``
+
+	Web = `:80`
 )
