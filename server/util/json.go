@@ -28,6 +28,14 @@ func (f *File) ReadJSON(m proto.Message) error {
 	return jsonUnmarshaler.Unmarshal(ab, m)
 }
 
+func (f *File) WriteJSON(m proto.Message) error {
+	ab, err := jsonMarshaler.Marshal(m)
+	if err != nil {
+		return err
+	}
+	return f.Write(ab)
+}
+
 func JSON(m any) string {
 
 	var ab []byte

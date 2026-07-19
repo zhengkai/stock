@@ -11,6 +11,7 @@ func Server() {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc(`/api/test`, apiTest)
 	mux.HandleFunc(`/api/sub`, apiSub)
 
 	s := &http.Server{

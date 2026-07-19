@@ -25,6 +25,10 @@ func NewFile(base string) *File {
 	}
 }
 
+func NewFileF(format string, a ...any) *File {
+	return NewFile(fmt.Sprintf(format, a...))
+}
+
 func (f *File) String() string {
 	return f.Base
 }
@@ -39,6 +43,7 @@ func (f *File) Read() ([]byte, error) {
 }
 
 func (f *File) Write(data []byte) error {
+	f.Mkdir()
 	return writeBin(f.Static, data)
 }
 

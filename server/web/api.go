@@ -1,6 +1,7 @@
 package web
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,6 +10,21 @@ import (
 
 	"google.golang.org/protobuf/proto"
 )
+
+func apiTest(w http.ResponseWriter, r *http.Request) {
+
+	d := &pb.VAPIDSubscription{}
+
+	f := util.NewFile(`sub/d04624d3b246.pb`)
+	err := f.ReadProto(d)
+	if err != nil {
+		return
+	}
+
+	fmt.Println(`start web push`)
+	util.WebPush(d)
+	fmt.Println(`end web push`)
+}
 
 func apiSub(w http.ResponseWriter, r *http.Request) {
 
@@ -35,6 +51,13 @@ func apiSub(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	hash := sha256.Sum256(ab)
+	f := util.NewFileF(`sub/%x.pb`, hash[:6])
+	f.Write(ab)
+
+	f = util.NewFileF(`sub/%x.json`, hash[:6])
+	f.WriteJSON(d)
 
 	fmt.Println(`api sub`)
 	fmt.Println(util.JSON(d))

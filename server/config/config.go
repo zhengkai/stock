@@ -9,4 +9,7 @@ var (
 	StaticDir  = ``
 
 	Web = `:80`
+
+	VapidPublicKey  = ``
+	VapidPrivateKey = ``
 )

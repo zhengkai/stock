@@ -15,9 +15,11 @@ func init() {
 	Dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
 
 	list := map[string]*string{
-		`STOCK_WEB`:   &Web,
-		`STOCK_DIR`:   &StaticDir,
-		EnvItickToken: &ItickToken,
+		`STOCK_WEB`:               &Web,
+		`STOCK_DIR`:               &StaticDir,
+		`STOCK_VAPID_PUBLIC_KEY`:  &VapidPublicKey,
+		`STOCK_VAPID_PRIVATE_KEY`: &VapidPrivateKey,
+		EnvItickToken:             &ItickToken,
 	}
 	for k, v := range list {
 		s := os.Getenv(k)
