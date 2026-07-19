@@ -2,13 +2,20 @@
 package util
 
 import (
+	"fmt"
 	"os"
-	"server/config"
+	"path/filepath"
+	"project/config"
+)
+
+var (
+	TmpDir = NewFile(`tmp`)
 )
 
 type File struct {
 	Base   string
 	Static string
+	hasDir bool
 }
 
 func NewFile(base string) *File {
@@ -27,9 +34,60 @@ func (f *File) Read() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	f.hasDir = true
 	return ab, nil
 }
 
 func (f *File) Write(data []byte) error {
-	return nil
+	return writeBin(f.Static, data)
+}
+
+func (f *File) IsExists() bool {
+	_, err := os.Stat(f.Static)
+	if err == nil {
+		return true
+	}
+	exists := !os.IsNotExist(err)
+	if exists {
+		f.hasDir = true
+	}
+	return exists
+}
+
+func (f *File) Mkdir() error {
+	if f.hasDir {
+		return nil
+	}
+	err := os.MkdirAll(filepath.Dir(f.Static), config.DirFileMode)
+	if err == nil {
+		f.hasDir = true
+	}
+	return err
+}
+
+func writeBin(file string, li ...[]byte) (err error) {
+
+	f, err := TmpFile()
+	if err != nil {
+		return
+	}
+
+	f.Chmod(config.FileMode)
+	tmpName := f.Name()
+
+	for _, ab := range li {
+		if _, err = f.Write(ab); err != nil {
+			fmt.Println(`write bin fail`, file, len(ab))
+			os.Remove(tmpName)
+			f.Close()
+			return
+		}
+	}
+	f.Close()
+
+	return os.Rename(tmpName, file)
+}
+
+func TmpFile() (*os.File, error) {
+	return os.CreateTemp(TmpDir.Static, `tmp-go-*`)
 }

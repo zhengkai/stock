@@ -3,7 +3,7 @@ package web
 import (
 	"fmt"
 	"net/http"
-	"server/config"
+	"project/config"
 	"time"
 )
 

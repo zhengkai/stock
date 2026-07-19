@@ -4,7 +4,7 @@ package itick
 import (
 	"fmt"
 	"regexp"
-	"server/config"
+	"project/config"
 )
 
 var (

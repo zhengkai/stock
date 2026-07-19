@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
-	"server/util"
+	"project/util"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
 )

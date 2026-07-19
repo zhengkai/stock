@@ -43,17 +43,35 @@ const sub = async () => {
 	});
 };
 
+const checkSub = async (div: HTMLElement) => {
+	const registration = await navigator.serviceWorker.ready;
+
+	const subscription =
+		await registration.pushManager.getSubscription();
+
+	if (subscription) {
+		div.innerText = 'subscribed';
+	} else {
+		div.innerText = 'not subscribed';
+	}
+};
+
 (() => {
 
 	const box = document.createElement('div');
 	box.className = 'container';
 
 	const btn = document.createElement('button');
-	btn.className = 'btn btn-primary';
+	btn.className = 'btn btn-primary mb-4';
 	btn.innerText = 'Subscribe';
 	btn.onclick = sub;
 
 	box.appendChild(btn);
+
+	const div = document.createElement('div');
+	div.innerText = 'checking...';
+	box.appendChild(div);
+	checkSub(div);
 
 	app.appendChild(box);
 })();

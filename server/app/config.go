@@ -1,8 +1,8 @@
 package app
 
 import (
-	"server/pb"
-	"server/util"
+	"project/pb"
+	"project/util"
 )
 
 func (a *App) loadConfig() error {

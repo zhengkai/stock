@@ -1,6 +1,6 @@
 package app
 
-import "server/pb"
+import "project/pb"
 
 type App struct {
 	Config *pb.Config

@@ -2,8 +2,8 @@ package tc
 
 import (
 	"fmt"
-	"server/pb"
-	"server/util"
+	"project/pb"
+	"project/util"
 	"strings"
 )
 

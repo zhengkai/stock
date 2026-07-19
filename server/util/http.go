@@ -3,7 +3,7 @@ package util
 import (
 	"io"
 	"net/http"
-	"server/config"
+	"project/config"
 	"time"
 )
 
