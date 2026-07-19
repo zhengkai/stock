@@ -9,7 +9,7 @@ self.addEventListener("push", (event) => {
 			data.title,
 			{
 				body: data.body,
-				icon: "/icon.png"
+				icon: "/assets/favicon.webp"
 			}
 		)
 	);

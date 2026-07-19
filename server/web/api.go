@@ -22,7 +22,7 @@ func apiTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(`start web push`)
-	util.WebPush(d)
+	util.WebPush(d, w)
 	fmt.Println(`end web push`)
 }
 

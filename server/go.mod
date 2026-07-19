@@ -8,3 +8,8 @@ require (
 	golang.org/x/text v0.40.0
 	google.golang.org/protobuf v1.36.11
 )
+
+require (
+	github.com/SherClockHolmes/webpush-go v1.4.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
+)

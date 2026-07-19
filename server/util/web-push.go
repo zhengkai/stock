@@ -22,16 +22,45 @@ import (
 	"project/pb"
 	"time"
 
+	"github.com/SherClockHolmes/webpush-go"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func WebPush(d *pb.VAPIDSubscription) {
+func WebPush(d *pb.VAPIDSubscription, w io.Writer) {
+
+	payload := []byte(`{"title": "Hello", "body": "world"}`)
+
+	s := &webpush.Subscription{
+		Endpoint: d.GetEndpoint(),
+		Keys: webpush.Keys{
+			P256dh: d.GetP256Dh(),
+			Auth:   d.GetAuth(),
+		},
+	}
+
+	// Send Notification
+	resp, err := webpush.SendNotification(payload, s, &webpush.Options{
+		Subscriber:      "zhengkai@gmail.com",
+		VAPIDPublicKey:  config.VapidPublicKey,
+		VAPIDPrivateKey: config.VapidPrivateKey,
+		TTL:             30,
+	})
+	if err != nil {
+		fmt.Println(`webpush.SendNotification error`, err)
+		return
+	}
+	defer resp.Body.Close()
+}
+
+func WebPush2(d *pb.VAPIDSubscription, w io.Writer) {
 
 	payload := []byte(`{"title": "Hello", "body": "world"}`)
 	ep, err := encryptPayload(payload, d.GetP256Dh(), d.GetAuth())
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(`encrypted payload`, len(ep))
 
 	pKey, err := privateKeyFromBase64(config.VapidPrivateKey)
 	if err != nil {
@@ -66,15 +95,123 @@ func WebPush(d *pb.VAPIDSubscription) {
 	defer rsp.Body.Close()
 	ab, err := io.ReadAll(rsp.Body)
 
+	fmt.Fprintf(w, "Status: %d\n", rsp.StatusCode)
+	fmt.Fprintf(w, "Body: %d\n", len(ab))
+	w.Write(ab)
+
 	fmt.Println(rsp.StatusCode)
 	fmt.Println(len(ab), string(ab), err)
 }
+
+func encryptPayload(payload []byte, p256dh string, auth string) ([]byte, error) {
+	// 1. 解码客户端公钥（未压缩点，65字节）
+	uaPublic, err := base64.RawURLEncoding.DecodeString(p256dh)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. 解码 auth 秘密
+	authSecret, err := base64.RawURLEncoding.DecodeString(auth)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. 生成服务端临时 ECDH 密钥对
+	curve := ecdh.P256()
+	serverPriv, err := curve.GenerateKey(rand.Reader)
+	if err != nil {
+		return nil, err
+	}
+	serverPub := serverPriv.PublicKey()
+	asPublic := serverPub.Bytes() // 未压缩点，65字节
+
+	// 4. 计算 ECDH 共享秘密
+	clientPub, err := curve.NewPublicKey(uaPublic)
+	if err != nil {
+		return nil, err
+	}
+	sharedSecret, err := serverPriv.ECDH(clientPub)
+	if err != nil {
+		return nil, err
+	}
+
+	// 5. 密钥派生（RFC 8291 Section 3.4）
+	// PRK = HKDF-Extract(salt=auth_secret, IKM=shared_secret)
+	prk, err := hkdf.Extract(sha256.New, sharedSecret, authSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	// key_info = "WebPush: info" || 0x00 || ua_public || as_public
+	keyInfo := append([]byte("WebPush: info\x00"), uaPublic...)
+	keyInfo = append(keyInfo, asPublic...)
+
+	// nonce_info = "WebPush: nonce" || 0x00 || ua_public || as_public
+	nonceInfo := append([]byte("WebPush: nonce\x00"), uaPublic...)
+	nonceInfo = append(nonceInfo, asPublic...)
+
+	// CEK = HKDF-Expand(PRK, key_info, 16)
+	cek, err := hkdf.Expand(sha256.New, prk, string(keyInfo), 16)
+	if err != nil {
+		return nil, err
+	}
+
+	// NONCE = HKDF-Expand(PRK, nonce_info, 12)
+	nonce, err := hkdf.Expand(sha256.New, prk, string(nonceInfo), 12)
+	if err != nil {
+		return nil, err
+	}
+
+	// 6. 生成随机盐（仅写入记录，不参与加密）
+	salt := make([]byte, 16)
+	if _, err = rand.Read(salt); err != nil {
+		return nil, err
+	}
+
+	// 7. AES-128-GCM 加密
+	block, err := aes.NewCipher(cek)
+	if err != nil {
+		return nil, err
+	}
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+
+	// 明文末尾追加分隔符 0x02（RFC 8188 最终记录标记）
+	plaintext := append(payload, 0x02)
+	ciphertext := gcm.Seal(nil, nonce, plaintext, nil)
+
+	// 8. 组装 aes128gcm 消息体
+	// 格式：salt(16) | rs(4) | idlen(1) | keyid | ciphertext
+	keyID := asPublic // 服务端公钥作为 keyid
+	if len(keyID) > 255 {
+		return nil, errors.New("public key too large")
+	}
+
+	var body bytes.Buffer
+	body.Write(salt)
+
+	// record size 固定 4096
+	rs := make([]byte, 4)
+	binary.BigEndian.PutUint32(rs, 4096)
+	body.Write(rs)
+
+	body.WriteByte(byte(len(keyID)))
+	body.Write(keyID)
+	body.Write(ciphertext)
+
+	return body.Bytes(), nil
+}
+
 func createVAPIDJWT(privateKey *ecdsa.PrivateKey, endpoint string) (string, error) {
 
 	audience, err := vapidAudience(endpoint)
 	if err != nil {
 		return ``, err
 	}
+
+	fmt.Println(`audience`, audience)
 
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodES256,
@@ -99,7 +236,7 @@ func vapidAudience(endpoint string) (string, error) {
 	return u.Scheme + "://" + u.Host, nil
 }
 
-func encryptPayload(payload []byte, p256dh string, auth string) ([]byte, error) {
+func encryptPayloadX(payload []byte, p256dh string, auth string) ([]byte, error) {
 
 	// client public key
 	p256dhAB, err := base64.RawURLEncoding.DecodeString(p256dh)
@@ -150,7 +287,7 @@ func encryptPayload(payload []byte, p256dh string, auth string) ([]byte, error) 
 	// 4. salt
 
 	salt := make([]byte, 16)
-	if _, err := rand.Read(salt); err != nil {
+	if _, err = rand.Read(salt); err != nil {
 		return nil, err
 	}
 
