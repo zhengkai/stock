@@ -2,9 +2,9 @@ package util
 
 import (
 	"fmt"
-	"io"
 	"project/config"
 	"project/pb"
+	"strings"
 
 	"github.com/zhengkai/webpush-go"
 )
@@ -16,7 +16,28 @@ var webpushOptions = webpush.Options{
 	TTL:             30,
 }
 
-func WebPush(d *pb.VAPIDSubscription, w io.Writer) {
+var staticSub = NewFile(`sub`)
+
+func WebPushAll(title, body string) {
+	fl, err := staticSub.ReadDir(func(path string) bool {
+		return strings.HasSuffix(path, `.pb`)
+	})
+	if err != nil {
+		return
+	}
+	for _, v := range fl {
+		f := NewFile(v)
+		d := &pb.VAPIDSubscription{}
+		err := f.ReadProto(d)
+		if err != nil {
+			continue
+		}
+		fmt.Println(`web push`, f)
+		WebPush(d)
+	}
+}
+
+func WebPush(d *pb.VAPIDSubscription) {
 
 	payload := []byte(`{"title": "Hello", "body": "world"}`)
 

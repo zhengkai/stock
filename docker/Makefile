@@ -18,5 +18,5 @@ run:
 		--name stock-debug --rm \
 		stock-image
 
-tanya:
+tanya: build
 	./deploy-prod.sh

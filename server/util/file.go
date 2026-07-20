@@ -4,7 +4,6 @@ package util
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"project/config"
 )
 
@@ -59,15 +58,8 @@ func (f *File) IsExists() bool {
 	return exists
 }
 
-func (f *File) Mkdir() error {
-	if f.hasDir {
-		return nil
-	}
-	err := os.MkdirAll(filepath.Dir(f.Static), config.DirFileMode)
-	if err == nil {
-		f.hasDir = true
-	}
-	return err
+func (f *File) Remove() error {
+	return os.Remove(f.Static)
 }
 
 func writeBin(file string, li ...[]byte) (err error) {

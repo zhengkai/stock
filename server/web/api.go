@@ -13,16 +13,8 @@ import (
 
 func apiTest(w http.ResponseWriter, r *http.Request) {
 
-	d := &pb.VAPIDSubscription{}
-
-	f := util.NewFile(`sub/d04624d3b246.pb`)
-	err := f.ReadProto(d)
-	if err != nil {
-		return
-	}
-
 	fmt.Println(`start web push`)
-	util.WebPush(d, w)
+	util.WebPushAll(`hello`, `world2`)
 	fmt.Println(`end web push`)
 }
 
