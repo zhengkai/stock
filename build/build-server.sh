@@ -13,17 +13,15 @@ fi
 
 DATE=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
 GO_VERSION=$(go version)
-GIT_VERSION=$(./git-hash.sh)
-if [ "$DOCKER_RUNNING" == "yes" ] && [ -f .git-hash ]; then
-	GIT_VERSION=$(cat .git-hash || :)
-	HOSTNAME="docker"
+if [ -z "$GIT_COMMIT" ]; then
+	GIT_COMMIT=$(./git-hash.sh)
 fi
 
 LDFLAGS="-X '${BUILD_PACKAGE}.BuildGoVersion=${GO_VERSION}' \
 	-X '${BUILD_PACKAGE}.BuildTime=${DATE}' \
 	-X '${BUILD_PACKAGE}.BuildType=${TYPE}' \
 	-X '${BUILD_PACKAGE}.BuildHost=${HOSTNAME}' \
-	-X '${BUILD_PACKAGE}.BuildGit=${GIT_VERSION}'"
+	-X '${BUILD_PACKAGE}.BuildGit=${GIT_COMMIT}'"
 
 cd ../server
 
