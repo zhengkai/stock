@@ -10,13 +10,15 @@ fi
 
 cd "$(dirname "$(readlink -f "$0")")" || exit 1
 
+echo $(dirname "$(pwd)")
+
 # sudo docker pull "$DOCKER_IMAGE"
 
 ENV_FILE="./env-prod.sh"
 if [ ! -e "$ENV_FILE" ]; then
 	cp env.sh.example "$ENV_FILE"
 	mkdir -p static
-	echo "export STOCK_DIR=\"$(pwd)/static\"" >> "$ENV_FILE"
+	echo "export STOCK_DIR=\"$(dirname "$(pwd)")/static\"" >> "$ENV_FILE"
 fi
 . "$ENV_FILE"
 
