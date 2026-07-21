@@ -1,0 +1,9 @@
+edition = "2024";
+
+package pb;
+
+message PriceAlert {
+	string msg = 1;
+	fixed32 ts = 2;
+	fixed32 expire = 3;
+}

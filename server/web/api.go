@@ -13,9 +13,9 @@ import (
 
 func apiTest(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println(`start web push`)
-	util.WebPushAll(`hello`, `world2`)
-	fmt.Println(`end web push`)
+	// fmt.Println(`start web push`)
+	// util.WebPushAll(`hello`, `world2`)
+	// fmt.Println(`end web push`)
 }
 
 func apiSub(w http.ResponseWriter, r *http.Request) {

@@ -12,9 +12,11 @@ var ErrInvalidQuote = fmt.Errorf(`invalid quote string`)
 func stockQuote(q string) (*pb.Quote, error) {
 
 	ql := strings.Split(q, `~`)
-	if len(ql) < 50 {
+	if len(ql) < 60 {
 		return nil, ErrInvalidQuote
 	}
+
+	// fmt.Println(util.JSON(ql))
 
 	p := &util.QuoteParser{}
 	b := pb.Quote_builder{
@@ -23,15 +25,22 @@ func stockQuote(q string) (*pb.Quote, error) {
 		Open:     p.Cents(`Open`, ql[5]),
 		High:     p.Cents(`High`, ql[33]),
 		Low:      p.Cents(`Low`, ql[34]),
+		Change:   p.Cents(`Change`, ql[31]),
 
-		ChangeBp:       p.BP(`ChangeBp`, ql[31]),
+		ChangeBp:       p.BP(`ChangeBp`, ql[32]),
 		TurnoverRateBp: p.BP(`TurnoverRateBp`, ql[38]),
 		AmplitudeBp:    p.BP(`AmplitudeBp`, ql[43]),
 
 		Volume:   p.Num(`Volume`, ql[36]),
 		Turnover: p.Num(`Turnover`, ql[37]),
+
+		LimitUp:   p.Cents(`LimitUp`, ql[47]),
+		LimitDown: p.Cents(`LimitDown`, ql[48]),
+
+		Ts: new(util.TS()),
 	}
 	if p.Err != nil {
+		fmt.Println(`quote parse error:`, p.Err)
 		return nil, p.Err
 	}
 
@@ -43,6 +52,6 @@ func Stock(code string) (*pb.Quote, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	// fmt.Println(`fetch quote:`, q)
 	return stockQuote(q)
 }

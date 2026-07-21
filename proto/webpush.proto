@@ -2,6 +2,11 @@ edition = "2024";
 
 package pb;
 
+message WebPush {
+	string title = 1;
+	string body = 2;
+}
+
 message VAPIDSubscription {
 	string endpoint = 1;
 	string p256dh = 2;

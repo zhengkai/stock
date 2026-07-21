@@ -25,6 +25,12 @@ func WebPushAll(title, body string) {
 	if err != nil {
 		return
 	}
+
+	msg := pb.WebPush_builder{
+		Title: &title,
+		Body:  &body,
+	}.Build()
+
 	for _, v := range fl {
 		f := NewFile(v)
 		d := &pb.VAPIDSubscription{}
@@ -33,13 +39,11 @@ func WebPushAll(title, body string) {
 			continue
 		}
 		fmt.Println(`web push`, f)
-		WebPush(d)
+		WebPush(JSONBin(msg), d)
 	}
 }
 
-func WebPush(d *pb.VAPIDSubscription) {
-
-	payload := []byte(`{"title": "Hello", "body": "world"}`)
+func WebPush(payload []byte, d *pb.VAPIDSubscription) {
 
 	s := &webpush.Subscription{
 		Endpoint: d.GetEndpoint(),

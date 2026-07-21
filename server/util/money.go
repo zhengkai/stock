@@ -27,13 +27,13 @@ type QuoteParser struct {
 	Err error
 }
 
-func (p *QuoteParser) Num(field, v string) *uint64 {
+func (p *QuoteParser) Num(field, v string) *int64 {
 
 	if p.Err != nil {
 		return nil
 	}
 
-	i, err := strconv.ParseUint(v, 10, 64)
+	i, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		p.Err = fmt.Errorf("%s 解析失败: %w", field, err)
 		return nil
@@ -56,7 +56,7 @@ func (p *QuoteParser) BP(field, v string) *int32 {
 	return new(int32(i))
 }
 
-func (p *QuoteParser) Cents(field, v string) *uint64 {
+func (p *QuoteParser) Cents(field, v string) *int64 {
 	if p.Err != nil {
 		return nil
 	}
@@ -66,9 +66,5 @@ func (p *QuoteParser) Cents(field, v string) *uint64 {
 		p.Err = fmt.Errorf("%s 解析失败: %w", field, err)
 		return nil
 	}
-	if i < 0 {
-		i = 0
-	}
-
-	return new(uint64(i))
+	return &i
 }

@@ -12,7 +12,7 @@ func run() {
 
 	go app.Run()
 
-	go web.Server()
+	web.Server()
 }
 
 func afterRun() {

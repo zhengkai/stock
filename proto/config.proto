@@ -9,6 +9,10 @@ message Config {
 message Alert {
 	string code = 1;
 	string name = 2;
-	double min = 3;
-	double max = 4;
+	uint64 min = 3;
+	uint64 max = 4;
+}
+
+message AlertState {
+	fixed32 ts = 2;
 }

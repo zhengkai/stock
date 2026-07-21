@@ -5,4 +5,6 @@ const (
 
 	DirFileMode = 0775
 	FileMode    = 0664
+
+	StockCacheExpire uint32 = 130
 )
