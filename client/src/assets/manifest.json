@@ -1,10 +1,11 @@
 {
-  "id": "https://stock.anna.9farm.com/",
-  "name": "Reminder",
-  "short_name": "Reminder",
+  "id": "https://stock.tanya.9farm.com/",
+  "name": "Stock Reminder",
+  "short_name": "Stock Reminder",
   "description": "A personal reminder and notification app",
+  "display": "standalone",
 
-  "start_url": "/",
+  "start_url": "https://stock.tanya.9farm.com/",
 
   "display": "standalone",
 
