@@ -16,6 +16,15 @@ func IsWorkTime(sleep bool) bool {
 		return true
 	}
 
+	weekday := time.Now().Weekday()
+	if weekday == time.Saturday || weekday == time.Sunday {
+		if sleep {
+			fmt.Println(`非工作日`, weekday)
+			life.Sleep(32400) // 9 hour
+		}
+		return false
+	}
+
 	hour := time.Now().Hour()
 	if hour < 9 || hour > 15 {
 		if sleep {
@@ -31,13 +40,5 @@ func IsWorkTime(sleep bool) bool {
 		return false
 	}
 
-	weekday := time.Now().Weekday()
-	if weekday == time.Saturday || weekday == time.Sunday {
-		if sleep {
-			fmt.Println(`非工作日`, weekday)
-			life.Sleep(32400) // 9 hour
-		}
-		return false
-	}
 	return true
 }
