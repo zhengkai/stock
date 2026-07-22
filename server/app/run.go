@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"project/util"
 	"time"
@@ -35,7 +36,21 @@ func (a *App) run() error {
 
 	a.checkAlert()
 
+	a.logLimit()
+
 	// fmt.Println(tc.StockURL([]string{`600519`}))
 
 	return nil
+}
+
+func (a *App) logLimit() error {
+
+	code := `002594`
+	q := Stock(code)
+	if q == nil {
+		return errors.New(`stock query error`)
+	}
+
+	f := util.NewFile(`stock/limit.log`)
+	return f.AppendF("%s %s %6d %6d\n", time.Now().Format(time.DateTime), code, q.GetLimitUp(), q.GetLimitDown())
 }

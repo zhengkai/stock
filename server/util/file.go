@@ -58,6 +58,28 @@ func (f *File) IsExists() bool {
 	return exists
 }
 
+func (f *File) Append(s string) error {
+	h, err := os.OpenFile(f.Static, os.O_WRONLY|os.O_CREATE|os.O_APPEND, config.FileMode)
+	if err != nil {
+		return err
+	}
+	defer h.Close()
+
+	_, err = h.WriteString(s)
+	return err
+}
+
+func (f *File) AppendF(format string, arg ...any) error {
+	h, err := os.OpenFile(f.Static, os.O_WRONLY|os.O_CREATE|os.O_APPEND, config.FileMode)
+	if err != nil {
+		return err
+	}
+	defer h.Close()
+
+	_, err = fmt.Fprintf(h, format, arg...)
+	return err
+}
+
 func (f *File) Remove() error {
 	return os.Remove(f.Static)
 }
