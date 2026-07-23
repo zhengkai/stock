@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"project/metrics"
 	"project/pb"
 	"project/util"
 
@@ -13,12 +14,18 @@ import (
 
 func apiTest(w http.ResponseWriter, r *http.Request) {
 
+	metrics.ReqConcurrentInc()
+	defer metrics.ReqConcurrentDec()
+
 	// fmt.Println(`start web push`)
 	// util.WebPushAll(`hello`, `world2`)
 	// fmt.Println(`end web push`)
 }
 
 func apiSub(w http.ResponseWriter, r *http.Request) {
+
+	metrics.ReqConcurrentInc()
+	defer metrics.ReqConcurrentDec()
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

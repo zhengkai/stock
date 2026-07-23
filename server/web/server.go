@@ -1,3 +1,5 @@
+// Package web 服务
+
 package web
 
 import (
@@ -5,12 +7,15 @@ import (
 	"net/http"
 	"project/config"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Server() {
 
 	mux := http.NewServeMux()
 
+	mux.Handle(`/_metrics`, promhttp.Handler())
 	mux.HandleFunc(`/api/test`, apiTest)
 	mux.HandleFunc(`/api/sub`, apiSub)
 

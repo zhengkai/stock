@@ -2,12 +2,15 @@ package app
 
 import (
 	"project/config"
+	"project/metrics"
 	"project/pb"
 	"project/tc"
 	"project/util"
 )
 
 func Stock(code string) *pb.Quote {
+
+	metrics.StockQuery(code)
 
 	f := util.NewFileF(`stock/%s.pb`, code)
 	if d := stockCache(f); d != nil {

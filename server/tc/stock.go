@@ -2,6 +2,7 @@ package tc
 
 import (
 	"fmt"
+	"project/metrics"
 	"project/pb"
 	"project/util"
 	"strings"
@@ -9,10 +10,11 @@ import (
 
 var ErrInvalidQuote = fmt.Errorf(`invalid quote string`)
 
-func stockQuote(q string) (*pb.Quote, error) {
+func stockQuote(q string, code string) (*pb.Quote, error) {
 
 	ql := strings.Split(q, `~`)
 	if len(ql) < 60 {
+		metrics.StockFetchFail(code)
 		return nil, ErrInvalidQuote
 	}
 
@@ -41,6 +43,7 @@ func stockQuote(q string) (*pb.Quote, error) {
 	}
 	if p.Err != nil {
 		fmt.Println(`quote parse error:`, p.Err)
+		metrics.StockFetchFail(code)
 		return nil, p.Err
 	}
 
@@ -48,10 +51,11 @@ func stockQuote(q string) (*pb.Quote, error) {
 }
 
 func Stock(code string) (*pb.Quote, error) {
+	metrics.StockFetch(code)
 	q, err := stockURL(code)
 	if err != nil {
+		metrics.StockFetchFail(code)
 		return nil, err
 	}
-	// fmt.Println(`fetch quote:`, q)
-	return stockQuote(q)
+	return stockQuote(q, code)
 }
