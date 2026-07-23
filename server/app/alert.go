@@ -144,33 +144,30 @@ func (pm *priceCheckMeta) msgF(format string, a ...any) string {
 	return pm.msg(fmt.Sprintf(format, a...))
 }
 
-func (a *App) checkAlert() {
+func (app *App) checkAlert() {
 
 	fmt.Println()
-	fmt.Println(`alert list`, len(a.Config.GetAlert()))
-	for _, al := range a.Config.GetAlert() {
-		a.checkAlertOne(al)
-		// if life.Sleep(sleep) != nil {
-		// fmt.Println(`break`)
-		// break
-		// }
+	fmt.Println(`alert list`, len(app.Config.GetAlert()))
+	for _, a := range app.Config.GetAlert() {
+		normalizationAlert(a)
+		app.checkAlertOne(a)
 	}
 }
 
-func (a *App) checkAlertOne(al *pb.Alert) (msg string, sleep int, ok bool) {
+func (app *App) checkAlertOne(a *pb.Alert) (msg string, sleep int, ok bool) {
 
 	pc := &priceCheckMeta{
-		code: al.GetCode(),
-		name: al.GetName(),
+		code: a.GetCode(),
+		name: a.GetName(),
 		ts:   util.TS(),
 	}
-	pc.loadAlert(&pc.up, true, al.GetMax())
-	pc.loadAlert(&pc.down, false, al.GetMin())
+	pc.loadAlert(&pc.up, true, a.GetMax())
+	pc.loadAlert(&pc.down, false, a.GetMin())
 	if pc.alertSkip > 2 {
 		return
 	}
 
-	q := Stock(al.GetCode())
+	q := Stock(a.GetCode())
 	if q == nil || q.GetPrice() < 1 {
 		return
 	}

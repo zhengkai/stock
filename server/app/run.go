@@ -27,23 +27,23 @@ func Run() {
 	}
 }
 
-func (a *App) run() error {
+func (app *App) run() error {
 
-	err := a.loadConfig()
+	err := app.loadConfig()
 	if err != nil {
 		return err
 	}
 
-	a.checkAlert()
+	app.checkAlert()
 
-	a.logLimit()
+	app.logLimit()
 
 	// fmt.Println(tc.StockURL([]string{`600519`}))
 
 	return nil
 }
 
-func (a *App) logLimit() error {
+func (app *App) logLimit() error {
 
 	code := `002594`
 	q := Stock(code)

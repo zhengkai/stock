@@ -5,11 +5,11 @@ import (
 	"project/util"
 )
 
-func (a *App) loadConfig() error {
+func (app *App) loadConfig() error {
 
-	a.Config = &pb.Config{}
+	app.Config = &pb.Config{}
 
-	err := util.NewFile(`config.json`).ReadJSON(a.Config)
+	err := util.NewFile(`config.json`).ReadJSON(app.Config)
 	if err != nil {
 		return err
 	}
