@@ -2,8 +2,8 @@ package app
 
 import (
 	"errors"
-	"fmt"
 	"project/util"
+	"project/zj"
 	"time"
 
 	"github.com/zhengkai/life-go"
@@ -14,14 +14,14 @@ func Run() {
 
 	for !life.Stop {
 
-		fmt.Println(`tick`, time.Now().Format(time.DateTime))
+		zj.J(`tick`, time.Now().Format(time.DateTime))
 		if !util.IsWorkTime(true) {
 			continue
 		}
 
 		err := a.run()
 		if err != nil {
-			fmt.Println(`app loop error:`, err)
+			zj.W(`app loop error:`, err)
 		}
 		life.Sleep(50)
 	}
@@ -37,8 +37,6 @@ func (app *App) run() error {
 	app.checkAlert()
 
 	app.logLimit()
-
-	// fmt.Println(tc.StockURL([]string{`600519`}))
 
 	return nil
 }

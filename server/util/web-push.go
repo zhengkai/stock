@@ -1,9 +1,9 @@
 package util
 
 import (
-	"fmt"
 	"project/config"
 	"project/pb"
+	"project/zj"
 	"strings"
 
 	"github.com/zhengkai/webpush-go"
@@ -38,7 +38,7 @@ func WebPushAll(title, body string) {
 		if err != nil {
 			continue
 		}
-		fmt.Println(`web push`, f)
+		zj.J(`web push`, f)
 		WebPush(JSONBin(msg), d)
 	}
 }
@@ -55,7 +55,7 @@ func WebPush(payload []byte, d *pb.VAPIDSubscription) {
 
 	rsp, err := webpush.SendNotification(payload, s, &webpushOptions)
 	if err != nil {
-		fmt.Println(`webpush.SendNotification error`, err)
+		zj.W(`webpush.SendNotification error`, err)
 		return
 	}
 	defer rsp.Body.Close()

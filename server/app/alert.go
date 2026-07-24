@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"project/pb"
 	"project/util"
+	"project/zj"
 	"strings"
 )
 
@@ -136,7 +137,7 @@ func (pm *priceCheckMeta) msg(msg ...any) string {
 	args = append(args, msg...)
 
 	s := strings.TrimSuffix(fmt.Sprintln(args...), "\n")
-	fmt.Println(s)
+	zj.J(s)
 	return s
 }
 
@@ -146,8 +147,8 @@ func (pm *priceCheckMeta) msgF(format string, a ...any) string {
 
 func (app *App) checkAlert() {
 
-	fmt.Println()
-	fmt.Println(`alert list`, len(app.Config.GetAlert()))
+	zj.J()
+	zj.J(`alert list`, len(app.Config.GetAlert()))
 	for _, a := range app.Config.GetAlert() {
 		normalizationAlert(a)
 		app.checkAlertOne(a)

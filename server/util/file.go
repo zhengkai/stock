@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"project/config"
+	"project/zj"
 )
 
 var (
@@ -96,7 +97,7 @@ func writeBin(file string, li ...[]byte) (err error) {
 
 	for _, ab := range li {
 		if _, err = f.Write(ab); err != nil {
-			fmt.Println(`write bin fail`, file, len(ab))
+			zj.W(`write bin fail`, file, len(ab))
 			os.Remove(tmpName)
 			f.Close()
 			return

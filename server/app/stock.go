@@ -14,7 +14,6 @@ func Stock(code string) *pb.Quote {
 
 	f := util.NewFileF(`stock/%s.pb`, code)
 	if d := stockCache(f); d != nil {
-		// fmt.Println(`stock cache hit`, code, d.GetPrice())
 		return d
 	}
 	d, err := tc.Stock(code)

@@ -2,12 +2,12 @@ package web
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"io"
 	"net/http"
 	"project/metrics"
 	"project/pb"
 	"project/util"
+	"project/zj"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -17,13 +17,10 @@ func apiTest(w http.ResponseWriter, r *http.Request) {
 	metrics.ReqConcurrentInc()
 	defer metrics.ReqConcurrentDec()
 
-	// fmt.Println(`start web push`)
-	// util.WebPushAll(`hello`, `world2`)
-	// fmt.Println(`end web push`)
+	util.WebPushAll(`hello`, `world2`)
 }
 
 func apiSub(w http.ResponseWriter, r *http.Request) {
-
 	metrics.ReqConcurrentInc()
 	defer metrics.ReqConcurrentDec()
 
@@ -58,6 +55,6 @@ func apiSub(w http.ResponseWriter, r *http.Request) {
 	f = util.NewFileF(`sub/%x.json`, hash[:6])
 	f.WriteJSON(d)
 
-	fmt.Println(`api sub`)
-	fmt.Println(util.JSON(d))
+	zj.J(`api sub`)
+	zj.J(util.JSON(d))
 }

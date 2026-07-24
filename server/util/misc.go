@@ -1,8 +1,8 @@
 package util
 
 import (
-	"fmt"
 	"project/config"
+	"project/zj"
 	"time"
 
 	"github.com/zhengkai/life-go"
@@ -19,7 +19,7 @@ func IsWorkTime(sleep bool) bool {
 	weekday := time.Now().Weekday()
 	if weekday == time.Saturday || weekday == time.Sunday {
 		if sleep {
-			fmt.Println(`非工作日`, weekday)
+			zj.J(`非工作日`, weekday)
 			life.Sleep(32400) // 9 hour
 		}
 		return false
@@ -28,7 +28,7 @@ func IsWorkTime(sleep bool) bool {
 	hour := time.Now().Hour()
 	if hour < 9 || hour > 15 {
 		if sleep {
-			fmt.Println(`非工作时间`, hour)
+			zj.J(`非工作时间`, hour)
 			if hour == 8 {
 				life.Sleep(600)
 			} else if hour > 15 {

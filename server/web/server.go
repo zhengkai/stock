@@ -3,9 +3,9 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"project/config"
+	"project/zj"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -27,11 +27,11 @@ func Server() {
 		IdleTimeout:  30 * time.Second,
 	}
 
-	fmt.Println(`start web server`, s.Addr)
+	zj.J(`start web server`, s.Addr)
 
 	err := s.ListenAndServe()
 	if err != nil {
-		fmt.Println(err)
+		zj.W(err)
 		return
 	}
 }

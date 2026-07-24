@@ -6,6 +6,7 @@ require (
 	github.com/prometheus/client_golang v1.24.0
 	github.com/zhengkai/life-go v1.0.3
 	github.com/zhengkai/webpush-go v1.0.1
+	github.com/zhengkai/zog v1.0.3
 	golang.org/x/text v0.40.0
 	google.golang.org/protobuf v1.36.11
 )

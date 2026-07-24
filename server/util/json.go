@@ -2,7 +2,7 @@ package util
 
 import (
 	"encoding/json"
-	"fmt"
+	"project/zj"
 
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -71,7 +71,7 @@ func JSONBin(m any) []byte {
 		ab, err = json.Marshal(m)
 	}
 	if err != nil {
-		fmt.Println(err)
+		zj.W(err)
 		return nil
 	}
 	return ab
