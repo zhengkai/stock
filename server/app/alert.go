@@ -79,7 +79,9 @@ func (pm *priceCheckMeta) do(pc *priceCheck, limit int64, limitName string) {
 	if sleep == 0 {
 		sleep = 600
 	}
+	save := true
 	if msg == `` {
+		save = false
 		msg = pm.msg(pc.name, `nothing`)
 	}
 
@@ -90,8 +92,10 @@ func (pm *priceCheckMeta) do(pc *priceCheck, limit int64, limitName string) {
 
 	pc.file.WriteJSON(d)
 
-	last := util.NewFile(`last-alert.json`)
-	last.WriteJSON(d)
+	if save {
+		last := util.NewFile(`last-alert.json`)
+		last.WriteJSON(d)
+	}
 }
 
 func (pm *priceCheckMeta) check(pc *priceCheck) (msg string, sleep uint32, ok bool) {
