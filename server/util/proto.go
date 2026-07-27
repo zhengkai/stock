@@ -26,5 +26,5 @@ func (f *File) WriteProto(m proto.Message) error {
 	if err != nil {
 		return err
 	}
-	return f.Write(ab)
+	return f.WriteWithHash(ab)
 }

@@ -2,11 +2,16 @@
 package util
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"project/config"
 	"project/zj"
+
+	"golang.org/x/sys/unix"
 )
+
+const xattrHashKey = `user.sha256hash`
 
 var (
 	TmpDir = NewFile(`tmp`)
@@ -15,6 +20,7 @@ var (
 type File struct {
 	Base   string
 	Static string
+	hash   *[sha256.Size]byte
 	hasDir bool
 }
 
@@ -45,6 +51,47 @@ func (f *File) Read() ([]byte, error) {
 func (f *File) Write(data []byte) error {
 	f.Mkdir()
 	return writeBin(f.Static, data)
+}
+
+func (f *File) WriteWithHash(data []byte) error {
+
+	h := sha256.Sum256(data)
+	if f.checkHash(h) {
+		zj.J(`hash same, skip write`, f.Static)
+		return nil
+	}
+	zj.F(`hash %x`, h[:8])
+
+	return writeBinWithHash(f.Static, data, h)
+}
+
+func (f *File) checkHash(h [sha256.Size]byte) bool {
+	ph := f.getHash()
+	if ph == nil {
+		return false
+	}
+	return *ph == h
+}
+
+func (f *File) getHash() *[sha256.Size]byte {
+	if f.hash != nil {
+		return f.hash
+	}
+
+	buf := make([]byte, sha256.Size)
+	size, err := unix.Getxattr(f.Static, xattrHashKey, buf)
+	if size != sha256.Size {
+		// err = fmt.Errorf(`invalid hash size: %d`, size)
+		return nil
+	}
+	if err != nil {
+		return nil
+	}
+	f.hasDir = true
+	hash := [sha256.Size]byte{}
+	copy(hash[:], buf)
+	f.hash = &hash
+	return f.hash
 }
 
 func (f *File) IsExists() bool {
@@ -83,6 +130,29 @@ func (f *File) AppendF(format string, arg ...any) error {
 
 func (f *File) Remove() error {
 	return os.Remove(f.Static)
+}
+
+func writeBinWithHash(file string, content []byte, hash [sha256.Size]byte) (err error) {
+
+	f, err := TmpFile()
+	if err != nil {
+		return
+	}
+
+	f.Chmod(config.FileMode)
+	tmpName := f.Name()
+
+	if _, err = f.Write(content); err != nil {
+		zj.W(`write bin fail`, file, len(content))
+		os.Remove(tmpName)
+		f.Close()
+		return
+	}
+
+	fd := int(f.Fd())
+	unix.Fsetxattr(fd, xattrHashKey, hash[:], 0) // 失败也无所谓，就当没 hash
+
+	return os.Rename(tmpName, file)
 }
 
 func writeBin(file string, li ...[]byte) (err error) {

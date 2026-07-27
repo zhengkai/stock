@@ -41,7 +41,7 @@ func (f *File) WriteJSON(m proto.Message) error {
 	if err != nil {
 		return err
 	}
-	return f.Write(ab)
+	return f.WriteWithHash(ab)
 }
 
 func JSON(m any) string {

@@ -1,7 +1,9 @@
+// Package project 项目起始
 package project
 
 import (
 	"project/app"
+	"project/config"
 	"project/util"
 	"project/web"
 	"project/zj"
@@ -13,7 +15,10 @@ func run() {
 
 	util.Init()
 
-	go app.Run()
+	if config.Prod {
+		go app.Run()
+	}
+	// go app.Test()
 
 	web.Server()
 }
