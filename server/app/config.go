@@ -14,5 +14,6 @@ func (app *App) loadConfig() error {
 		return err
 	}
 
+	go app.pool.SetConfig(app.Config)
 	return nil
 }

@@ -114,7 +114,7 @@ func (pm *priceCheckMeta) check(pc *priceCheck) (msg string, sleep uint32, ok bo
 
 	remain := (pc.threshold - pm.price) * di
 	if remain <= 0 {
-		sleep = 43200 // 半天
+		sleep = 100
 		msg = pm.msgF(`当前价格 %s 已达到%s价 %s `, util.Price(pm.price), pc.name, util.Price(pc.threshold))
 		ok = true
 		return

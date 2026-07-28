@@ -4,16 +4,31 @@
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/assets/favicon.webp" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="manifest" href="/assets/manifest.json">
 		<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/style/index.scss">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="default">
-		<meta name="apple-mobile-web-app-title" content="Reminder">
 		<title>Stock Reminder</title>
 	</head>
 	<body>
-		<div id="app"></div>
+		<div class="container">
+		<table id="stock-table" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>代码</th>
+					<th class="price">开盘</th>
+					<th class="price">抄底</th>
+					<th class="price">当前价</th>
+					<th class="price">出货</th>
+					<th class="price">涨跌</th>
+					<th class="price">涨幅</th>
+					<th class="price">最高</th>
+					<th class="price">最低</th>
+					<th>时间</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		</div>
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>

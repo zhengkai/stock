@@ -7,6 +7,8 @@ import (
 	"project/util"
 	"project/web"
 	"project/zj"
+
+	"github.com/zhengkai/life-go"
 )
 
 func run() {
@@ -15,10 +17,27 @@ func run() {
 
 	util.Init()
 
-	if config.Prod {
-		go app.Run()
-	}
+	go func() {
+		app.Init()
+		if config.Prod {
+			life.Sleep(50)
+			app.Run()
+		}
+	}()
+
 	// go app.Test()
+
+	if false && !config.Prod {
+		go func() {
+			for {
+				zj.J(util.JSONPretty(app.GetPB()))
+				zj.J()
+				life.Sleep(3)
+			}
+		}()
+	}
+
+	zj.J(util.TimeNumber())
 
 	web.Server()
 }

@@ -11,5 +11,5 @@ itick:
 	protoc --go_out=../server $$OPTS *.proto
 
 client:
-	$(PB_BIN)/pbjs -t static-module -w es6 --es6 --force-number -o ${PB_JS}/pb.js vapid.proto
+	$(PB_BIN)/pbjs -t static-module -w es6 --es6 --force-number -o ${PB_JS}/pb.js *.proto
 	$(PB_BIN)/pbts -o ${PB_JS}/pb.d.ts ${PB_JS}/pb.js

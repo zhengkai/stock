@@ -14,12 +14,14 @@ func Stock(code string) *pb.Quote {
 
 	f := util.NewFileF(`stock/%s.pb`, code)
 	if d := stockCache(f); d != nil {
+		go theApp.pool.setQuote(code, d)
 		return d
 	}
 	d, err := tc.Stock(code)
 	if err != nil {
 		return nil
 	}
+	go theApp.pool.setQuote(code, d)
 
 	f.WriteProto(d)
 	return d

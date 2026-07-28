@@ -4,4 +4,5 @@ dev:
 	./node_modules/vite/bin/vite.js --host stock.anna.9farm.com --port 22722
 
 build:
+	cd ../proto && make client
 	./node_modules/vite/bin/vite.js build --outDir dist

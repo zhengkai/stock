@@ -60,7 +60,7 @@ func (f *File) WriteWithHash(data []byte) error {
 		zj.J(`hash same, skip write`, f.Static)
 		return nil
 	}
-	zj.F(`hash %x`, h[:8])
+	zj.F(`hash %x, %s, %d`, h[:8], f.Base, len(data))
 
 	return writeBinWithHash(f.Static, data, h)
 }

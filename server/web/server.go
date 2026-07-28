@@ -4,7 +4,9 @@ package web
 
 import (
 	"net/http"
+	"project/app"
 	"project/config"
+	"project/util"
 	"project/zj"
 	"time"
 
@@ -16,7 +18,7 @@ func Server() {
 	mux := http.NewServeMux()
 
 	mux.Handle(`/_metrics`, promhttp.Handler())
-	mux.HandleFunc(`/api/test`, apiTest)
+	mux.HandleFunc(`/api/pool`, apiPool)
 	mux.HandleFunc(`/api/sub`, apiSub)
 
 	s := &http.Server{
@@ -34,4 +36,10 @@ func Server() {
 		zj.W(err)
 		return
 	}
+}
+
+func apiPool(w http.ResponseWriter, r *http.Request) {
+	d := app.GetPB()
+
+	util.HTTPReturnProto(d, w, r)
 }

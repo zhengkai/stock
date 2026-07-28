@@ -8,6 +8,11 @@ import (
 	"github.com/zhengkai/life-go"
 )
 
+const (
+	MimeProto     = `application/protobuf`
+	MimeProtoJSON = `application/protobuf+json; charset=utf-8`
+)
+
 type FnSelector func(path string) bool
 
 func IsWorkTime(sleep bool) bool {
@@ -25,13 +30,13 @@ func IsWorkTime(sleep bool) bool {
 		return false
 	}
 
-	hour := time.Now().Hour()
-	if hour < 9 || hour > 15 {
+	tn := TimeNumber()
+	if tn < 930 || tn > 1500 {
 		if sleep {
-			zj.J(`非工作时间`, hour)
-			if hour == 8 {
+			zj.J(`非工作时间`, time.Now().Format(time.TimeOnly))
+			if tn < 930 {
 				life.Sleep(600)
-			} else if hour > 15 {
+			} else if tn > 1500 {
 				life.Sleep(32400)
 			} else {
 				life.Sleep(3600)

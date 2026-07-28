@@ -26,6 +26,10 @@ var (
 		AllowPartial:   true,
 		DiscardUnknown: true,
 	}
+
+	MarshalJSON       = jsonMarshaler.Marshal
+	MarshalJSONPretty = jsonMarshalerPretty.Marshal
+	UnmarshalJSON     = jsonUnmarshaler.Unmarshal
 )
 
 func (f *File) ReadJSON(m proto.Message) error {
@@ -33,11 +37,11 @@ func (f *File) ReadJSON(m proto.Message) error {
 	if err != nil {
 		return err
 	}
-	return jsonUnmarshaler.Unmarshal(ab, m)
+	return UnmarshalJSON(ab, m)
 }
 
 func (f *File) WriteJSON(m proto.Message) error {
-	ab, err := jsonMarshaler.Marshal(m)
+	ab, err := MarshalJSON(m)
 	if err != nil {
 		return err
 	}
@@ -50,7 +54,7 @@ func JSON(m any) string {
 	var err error
 
 	if t, ok := m.(proto.Message); ok {
-		ab, err = jsonMarshaler.Marshal(t)
+		ab, err = MarshalJSON(t)
 	} else {
 		ab, err = json.Marshal(m)
 	}
@@ -66,7 +70,7 @@ func JSONBin(m any) []byte {
 	var err error
 
 	if t, ok := m.(proto.Message); ok {
-		ab, err = jsonMarshaler.Marshal(t)
+		ab, err = MarshalJSON(t)
 	} else {
 		ab, err = json.Marshal(m)
 	}
@@ -83,7 +87,7 @@ func JSONPretty(m any) string {
 	var err error
 
 	if t, ok := m.(proto.Message); ok {
-		ab, err = jsonMarshalerPretty.Marshal(t)
+		ab, err = MarshalJSONPretty(t)
 	} else {
 		ab, err = json.MarshalIndent(m, ``, "\t")
 	}

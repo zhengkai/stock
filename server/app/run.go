@@ -9,8 +9,11 @@ import (
 	"github.com/zhengkai/life-go"
 )
 
+func Init() {
+	theApp.run()
+}
+
 func Run() {
-	a := &App{}
 
 	for !life.Stop {
 
@@ -19,7 +22,7 @@ func Run() {
 			continue
 		}
 
-		err := a.run()
+		err := theApp.run()
 		if err != nil {
 			zj.W(`app loop error:`, err)
 		}
@@ -36,11 +39,12 @@ func (app *App) run() error {
 
 	app.checkAlert()
 
-	app.logLimit()
+	// app.logLimit()
 
 	return nil
 }
 
+// 记录开盘涨跌停价格，目前看来是每天 09:10 更新
 func (app *App) logLimit() error {
 
 	code := `002594`

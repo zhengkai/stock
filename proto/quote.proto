@@ -9,7 +9,6 @@ message Quote {
     int64 high = 4;           // 最高（分）
     int64 low = 5;            // 最低（分）
 
-
     int64 change = 6;         // 涨跌额（分）
 
     int32 change_bp = 7;      // 涨跌幅（BP，万分比）

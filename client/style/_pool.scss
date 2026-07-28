@@ -1,0 +1,29 @@
+#stock-table {
+	th, td {
+		cursor: default;
+	}
+	th {
+		text-align: center;
+	}
+	td.code, td.price, td.datetime {
+		font-family: monospace;
+	}
+	td.price {
+		width: 100px;
+		text-align: right;
+	}
+	td.name {
+		text-align: center;
+	}
+	td.datetime {
+		width: 230px;
+		text-align: center;
+	}
+
+	td.bar-up {
+		background: linear-gradient( to right, #FF9999 0%, #FF9999 calc(var(--rate) * 100%), #FFF calc(var(--rate) * 100%), #FFF 100%);
+	}
+	td.bar-down {
+		background: linear-gradient( to right, #99FF99 0%, #99FF99 calc(var(--rate) * 100%), #FFF calc(var(--rate) * 100%), #FFF 100%);
+	}
+}

@@ -1,77 +1,103 @@
 import { pb } from './pb';
+import Long from "long";
 
-if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register("/worker.js")
-		.then(reg => {
-			console.log("SW registered", reg);
-		});
+function n(v: number | Long | null | undefined): number {
+	if (Long.isLong(v)) {
+		return v.toNumber();
+	}
+	return v ?? 0;
 }
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
+function price(v: number | null | undefined) {
+	return (n(v) / 100).toFixed(2);
+}
 
-const pubKey = 'BFxTRa4-p7GX1aQFWXkhqN4iEjQohbcvpyslD6ZhZPKYLiO85lx5iigt0udB4G3ONK9gzNMR-81dTMvAkv80KVw';
+function percent(v: number | null | undefined) {
+	return (n(v) / 10000).toFixed(2) + '%';
+}
 
-const sub = async () => {
-
-	console.log('start sub')
-
-	const registration = await navigator.serviceWorker.ready;
-
-	const sub = (await registration.pushManager.subscribe({
-		userVisibleOnly: true,
-		applicationServerKey: pubKey,
-	})).toJSON();
-
-	const t = pb.VAPIDSubscription
-
-	const msg = t.fromObject({
-		endpoint: sub.endpoint,
-		p256dh: sub.keys?.p256dh,
-		auth: sub.keys?.auth,
-	})
-
-	const bin = t.encode(msg).finish();
-
-	console.log('sub', sub)
-
-	await fetch('/api/sub', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/protobuf',
-		},
-		body: new Uint8Array(bin).slice().buffer,
-	});
-};
-
-const checkSub = async (div: HTMLElement) => {
-	const registration = await navigator.serviceWorker.ready;
-
-	const subscription =
-		await registration.pushManager.getSubscription();
-
-	if (subscription) {
-		div.innerText = 'subscribed';
-	} else {
-		div.innerText = 'not subscribed';
+function xueqiuLink(code: string | null | undefined) {
+	if (!code) {
+		return '#';
 	}
-};
+	let prefix = 'SZ';
+	if (code.startsWith('6')) {
+		prefix = 'SH';
+	}
+	return `https://xueqiu.com/S/` + prefix + code;
+}
 
-(() => {
+function rate(a: number | null | undefined, b: number | null | undefined) {
+	a = n(a);
+	b = n(b);
 
-	const box = document.createElement('div');
-	box.className = 'container';
+	if (a == 0 || b == 0) {
+		return '--rate: 0';
+	}
 
-	const btn = document.createElement('button');
-	btn.className = 'btn btn-primary mb-4';
-	btn.innerText = 'Subscribe';
-	btn.onclick = sub;
+	const f = ((b / 10) - (b - a)) / (b / 10);
+	console.log('rate', a, b, f);
+	if (f <= 0) {
+		return '--rate: 0';
+	}
+	if (f > 1) {
+		return '--rate: 1';
+	}
+	return `--rate: ${f.toFixed(2)}`;
+}
 
-	box.appendChild(btn);
+// function volume(v: number | null | undefined) {
+// 	return n(v).toLocaleString();
+// }
+//
+// function money(v: number | null | undefined) {
+// 	return n(v).toLocaleString() + ' 万';
+// }
 
-	const div = document.createElement('div');
-	div.innerText = 'checking...';
-	box.appendChild(div);
-	checkSub(div);
+function timestamp(v: number | null | undefined) {
+	const d = new Date(n(v) * 1000);
+	const s = d.getFullYear()
+		+ "-" + String(d.getMonth() + 1).padStart(2, "0")
+		+ "-" + String(d.getDate()).padStart(2, "0")
+		+ " " + String(d.getHours()).padStart(2, "0")
+		+ ":" + String(d.getMinutes()).padStart(2, "0")
+		+ ":" + String(d.getSeconds()).padStart(2, "0");
+	return s;
+}
 
-	app.appendChild(box);
+function renderPool(ap: pb.AppPool) {
+	const tbody = document.querySelector('#stock-table tbody')!;
+
+	tbody.innerHTML = ap.stock.map((s) => {
+		const q = s.quote;
+		const a = s.alert;
+
+		return `<tr>
+	<td class="name">${s?.alert?.name}</td>
+	<td class="code"><a href="${xueqiuLink(s.code)}" target="_blank">${s.code}</td>
+	<td class="price">${price(q?.open)}</td>
+	<td class="price bar-down" style="${rate(a?.min, q?.price)}">${price(a?.min)}</td>
+	<td class="price">${price(q?.price)}</td>
+	<td class="price bar-up" style="${rate(q?.price, a?.max)}">${price(a?.max)}</td>
+	<td class="price">${price(q?.change)}</td>
+	<td class="price">${percent(q?.changeBp)}</td>
+	<td class="price">${price(q?.high)}</td>
+	<td class="price">${price(q?.low)}</td>
+	<td class="datetime">${timestamp(q?.ts)}</td>
+</tr>`;
+	}).join('');
+}
+
+(async () => {
+	const res = await fetch('/api/pool');
+	if (!res.ok) {
+		console.error('Failed to fetch pool:', res.statusText);
+	}
+
+	const buffer = await res.arrayBuffer();
+	const ap = pb.AppPool.decode(new Uint8Array(buffer));
+
+	console.log(ap);
+
+	renderPool(ap);
 })();

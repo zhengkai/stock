@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"project/config"
 	"time"
+
+	"google.golang.org/protobuf/proto"
 )
 
 var httpClient = &http.Client{
@@ -25,4 +27,10 @@ func HTTPGet(url string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func HTTPReturnProto(m proto.Message, w http.ResponseWriter, r *http.Request) {
+	ab, _ := MarshalProto(m)
+	w.Header().Set(`Content-Type`, MimeProto)
+	w.Write(ab)
 }

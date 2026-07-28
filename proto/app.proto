@@ -1,0 +1,17 @@
+edition = "2024";
+
+package pb;
+
+import "quote.proto";
+import "config.proto";
+
+message AppPool {
+	repeated AppStock stock = 1;
+	repeated string stock_order = 2;
+}
+
+message AppStock {
+	string code = 1;
+	Alert alert = 2;
+	Quote quote = 3;
+}
