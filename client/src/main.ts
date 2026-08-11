@@ -9,7 +9,11 @@ function n(v: number | Long | null | undefined): number {
 }
 
 function price(v: number | null | undefined) {
-	return (n(v) / 100).toFixed(2);
+	v = n(v)
+	if (!v) {
+		return '<span class="empty">-</span>';
+	}
+	return (v / 100).toFixed(2);
 }
 
 function percent(v: number | null | undefined) {

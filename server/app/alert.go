@@ -154,7 +154,7 @@ func (app *App) checkAlert() {
 	zj.J()
 	zj.J(`alert list`, len(app.Config.GetAlert()))
 	for _, a := range app.Config.GetAlert() {
-		normalizationAlert(a)
+		// normalizationAlert(a)
 		app.checkAlertOne(a)
 	}
 }

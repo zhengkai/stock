@@ -26,4 +26,9 @@
 	td.bar-down {
 		background: linear-gradient( to right, #99FF99 0%, #99FF99 calc(var(--rate) * 100%), #FFF calc(var(--rate) * 100%), #FFF 100%);
 	}
+	span.empty {
+		display: inline-block;
+		padding-right: 16px;
+		color: #aaa;
+	}
 }

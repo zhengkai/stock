@@ -4,6 +4,7 @@ import (
 	"project/pb"
 )
 
+// 已弃用
 func normalizationAlert(a *pb.Alert) {
 	if a.GetMax() == 0 && a.GetMin() > 0 {
 		a.SetMax(a.GetMin() * 2)
