@@ -40,7 +40,7 @@ function rate(a: number | null | undefined, b: number | null | undefined) {
 	}
 
 	const f = ((b / 10) - (b - a)) / (b / 10);
-	console.log('rate', a, b, f);
+	// console.log('rate', a, b, f);
 	if (f <= 0) {
 		return '--rate: 0';
 	}
@@ -92,6 +92,19 @@ function renderPool(ap: pb.AppPool) {
 	}).join('');
 }
 
+function renderGold(g: pb.Gold.$Properties | null | undefined) {
+	if (!g?.price) {
+		return;
+	}
+	const p = document.getElementById('gold-price');
+	if (!p) {
+		return;
+	}
+	p.innerHTML = `Gold Price: <span class="num">${g.price?.toFixed(2)}</span>`
+
+	console.log(g, p);
+}
+
 (async () => {
 	const res = await fetch('/api/pool');
 	if (!res.ok) {
@@ -104,4 +117,5 @@ function renderPool(ap: pb.AppPool) {
 	console.log(ap);
 
 	renderPool(ap);
+	renderGold(ap?.gold);
 })();

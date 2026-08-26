@@ -4,6 +4,7 @@ package project
 import (
 	"project/app"
 	"project/config"
+	"project/gold"
 	"project/util"
 	"project/web"
 	"project/zj"
@@ -26,6 +27,8 @@ func run() {
 	}()
 
 	// go app.Test()
+
+	go gold.Loop()
 
 	if false && !config.Prod {
 		go func() {

@@ -8,6 +8,13 @@ import "config.proto";
 message AppPool {
 	repeated AppStock stock = 1;
 	repeated string stock_order = 2;
+	Gold gold = 3;
+}
+
+message Gold {
+	float price = 1;
+	fixed32 ts = 2;
+	string error = 3;
 }
 
 message AppStock {
